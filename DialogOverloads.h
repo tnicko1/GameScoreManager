@@ -1,0 +1,25 @@
+#pragma once
+#include <wx/wx.h>
+#include <wx/numdlg.h>
+
+struct Values
+{
+    int valuesArr[10];
+};
+
+extern Values gValues;
+
+class MyNumberEntryDialog : public wxNumberEntryDialog {
+public:
+    MyNumberEntryDialog(wxWindow* parent, const wxString& message, const wxString& prompt, const wxString& caption, long value, long min, long max);
+private:
+    void SetupCustomLayout();
+
+    void OnAdvancedButtonClicked(wxCommandEvent& evt);
+    int processValues(const Values& values);
+
+
+
+    wxButton* advancedButton;
+    wxStaticText* advancedTip;
+};
