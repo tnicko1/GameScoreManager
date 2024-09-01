@@ -50,8 +50,6 @@ void MainFrame::CreateControls() {
 	gamesListBox->SetColumnWidth(8, 165);
 	gamesListBox->SetColumnWidth(10, 68);
 
-	deleteButton = new wxButton(panel, wxID_DELETE, "Delete");
-	deleteButton->Show(false);
 
 }
 
@@ -59,8 +57,8 @@ void MainFrame::BindEventHandlers() {
 	gamesListBox->Bind(wxEVT_LIST_ITEM_SELECTED, &MainFrame::OnListItemSelected, this);
 	addButton->Bind(wxEVT_BUTTON, &MainFrame::OnAddButtonClick, this);
 	inputField->Bind(wxEVT_TEXT_ENTER, &MainFrame::OnInputEnterClick, this);
-	deleteButton->Bind(wxEVT_BUTTON, &MainFrame::OnDelKeyButtonClick, this, wxID_DELETE);
 	gamesListBox->Bind(wxEVT_LIST_COL_CLICK, &MainFrame::OnColumnFilter, this);
+	gamesListBox->Bind(wxEVT_KEY_DOWN, &MainFrame::OnDelKeyClick, this);
 
 
 	panel->Bind(wxEVT_LEFT_DOWN, &MainFrame::OnListItemDeselected, this);
@@ -82,10 +80,6 @@ void MainFrame::SetupSizers() {
 	mainSizer->AddSpacer(25);
 	mainSizer->Add(gamesListBox, wxSizerFlags().Proportion(1).Expand());
 	mainSizer->AddSpacer(5);
-
-	wxBoxSizer* listButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
-	listButtonsSizer->Add(deleteButton);
-	mainSizer->Add(listButtonsSizer);
 
 	wxGridSizer* outerSizer = new wxGridSizer(1);
 	outerSizer->Add(mainSizer, wxSizerFlags().Border(wxALL, 20).Expand());
@@ -307,23 +301,39 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 
 void MainFrame::OnListItemSelected(wxListEvent& evt) {
 	selectedItemIndex = evt.GetIndex();
-	deleteButton->Show(true);
-	panel->Layout();
+}
+
+void MainFrame::RemoveFocus() {
+	// Create a dummy panel or window if needed
+	static wxPanel* dummyPanel = nullptr;
+	if (!dummyPanel)
+	{
+		dummyPanel = new wxPanel(panel, wxID_ANY);
+		dummyPanel->Hide();  // Hide it if you don't want it visible
+	}
+	dummyPanel->SetFocus();
 }
 
 void MainFrame::OnListItemDeselected(wxMouseEvent& evt) {
 	gamesListBox->SetItemState(selectedItemIndex, 0, wxLIST_STATE_SELECTED);
-	deleteButton->Show(false);
-	panel->Layout();
+	RemoveFocus();
 }
 
-void MainFrame::OnDelKeyButtonClick(wxCommandEvent& evt) {
-	if (selectedItemIndex != wxNOT_FOUND) {
-		int response = wxMessageBox("Are you sure you want to delete the selected item? this action is irreversible", "Confirm Deletion", wxYES_NO | wxICON_WARNING);
-		if (response == wxYES) {
-			gamesListBox->DeleteItem(selectedItemIndex);
-			selectedItemIndex = wxNOT_FOUND;
+void MainFrame::OnDelKeyClick(wxKeyEvent& evt) {
+	if (evt.GetKeyCode() == WXK_DELETE || evt.GetKeyCode() == WXK_BACK) {
+		if (selectedItemIndex != wxNOT_FOUND) {
+			int response = wxMessageBox("Are you sure you want to delete the selected item? this action is irreversible", "Confirm Deletion", wxYES_NO | wxICON_WARNING);
+			if (response == wxYES) {
+				gamesListBox->DeleteItem(selectedItemIndex);
+				selectedItemIndex = wxNOT_FOUND;
+			}
 		}
+		else {
+			evt.Skip();
+		}
+	}
+	else {
+		evt.Skip();
 	}
 }
 

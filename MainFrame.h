@@ -19,9 +19,10 @@ private:
 	void OnInputEnterClick(wxCommandEvent& evt);
 
 	void OnListItemSelected(wxListEvent& evt);
+	void RemoveFocus();
 	void OnListItemDeselected(wxMouseEvent& evt);
 	long selectedItemIndex;
-	void OnDelKeyButtonClick(wxCommandEvent& evt);
+	void OnDelKeyClick(wxKeyEvent& evt);
 
 	void OnColumnFilter(wxListEvent& evt);
 	int lastClickedColumn;
@@ -38,6 +39,5 @@ private:
 	wxButton* addButton;
 	wxTextCtrl* inputField;
 	wxListCtrl* gamesListBox;
-	wxButton* deleteButton;
 };
 
