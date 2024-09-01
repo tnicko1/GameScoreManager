@@ -1,4 +1,4 @@
-#include "MainFrame.h"
+﻿#include "MainFrame.h"
 #include "SavedGames.h"
 #include <cstddef> //for std::size_t
 #include <wx/numdlg.h>
@@ -11,6 +11,8 @@ MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) 
 	BindEventHandlers();
 	AddSavedGames();
 	ColorCodeItems();
+	clickCount = 0;
+	lastClickedColumn = -1;
 }
 
 void MainFrame::CreateControls() {
@@ -48,7 +50,6 @@ void MainFrame::CreateControls() {
 	gamesListBox->SetColumnWidth(8, 165);
 	gamesListBox->SetColumnWidth(10, 68);
 
-	filterButton = new wxButton(panel, wxID_ANY, "Filter");
 	deleteButton = new wxButton(panel, wxID_DELETE, "Delete");
 	deleteButton->Show(false);
 
@@ -59,8 +60,7 @@ void MainFrame::BindEventHandlers() {
 	addButton->Bind(wxEVT_BUTTON, &MainFrame::OnAddButtonClick, this);
 	inputField->Bind(wxEVT_TEXT_ENTER, &MainFrame::OnInputEnterClick, this);
 	deleteButton->Bind(wxEVT_BUTTON, &MainFrame::OnDelKeyButtonClick, this, wxID_DELETE);
-	gamesListBox->Bind(wxEVT_LIST_COL_BEGIN_DRAG, &MainFrame::OnResize, this);
-	filterButton->Bind(wxEVT_BUTTON, &MainFrame::OnFilterButtonClick, this);
+	gamesListBox->Bind(wxEVT_LIST_COL_CLICK, &MainFrame::OnColumnFilter, this);
 
 
 	panel->Bind(wxEVT_LEFT_DOWN, &MainFrame::OnListItemDeselected, this);
@@ -84,8 +84,6 @@ void MainFrame::SetupSizers() {
 	mainSizer->AddSpacer(5);
 
 	wxBoxSizer* listButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
-	listButtonsSizer->Add(filterButton);
-	listButtonsSizer->AddSpacer(5);
 	listButtonsSizer->Add(deleteButton);
 	mainSizer->Add(listButtonsSizer);
 
@@ -304,9 +302,7 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 
 		}
 		ColorCodeItems();
-	}
-	
-	
+	}	
 }
 
 void MainFrame::OnListItemSelected(wxListEvent& evt) {
@@ -317,6 +313,8 @@ void MainFrame::OnListItemSelected(wxListEvent& evt) {
 
 void MainFrame::OnListItemDeselected(wxMouseEvent& evt) {
 	gamesListBox->SetItemState(selectedItemIndex, 0, wxLIST_STATE_SELECTED);
+	deleteButton->Show(false);
+	panel->Layout();
 }
 
 void MainFrame::OnDelKeyButtonClick(wxCommandEvent& evt) {
@@ -329,64 +327,197 @@ void MainFrame::OnDelKeyButtonClick(wxCommandEvent& evt) {
 	}
 }
 
-void MainFrame::OnResize(wxListEvent& evt) {
-	evt.Veto();
-	wxMessageBox("Please resize from settings menu", "Caution", wxOK);
-}
 
-void MainFrame::OnFilterButtonClick(wxCommandEvent& evt)
-{
-	wxArrayString choices;
-	choices.Add("Score: High to Low");
-	choices.Add("Score: Low to High");
-	choices.Add("Alphabetically");
-	wxSingleChoiceDialog dialog(this, "Choose the filter option: ", "Filter", choices);
-	if (dialog.ShowModal() == wxID_OK) {
-		std::string userFilter = dialog.GetStringSelection().ToStdString();
-		std::vector<Games> gamesVec = LoadGamesFromFile("savedgames.txt");
-		if (userFilter == "Score: Low to High") {
-			std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-				return game1.values[0] < game2.values[0];
-				});
-		}
-		else if (userFilter == "Score: High to Low") {
-			std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-				return game1.values[0] > game2.values[0];
-				});
-		}
-		else if (userFilter == "Alphabetically") {
-			std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-				return game1.gameName < game2.gameName;
-				});
-		}
-		gamesListBox->DeleteAllItems();
+void MainFrame::OnColumnFilter(wxListEvent& evt) {
+	int columnIndex = evt.GetColumn();
+	wxListItem colItem;
+	colItem.SetMask(wxLIST_MASK_TEXT);
+	colItem.SetColumn(columnIndex);
+	gamesListBox->GetColumn(columnIndex, colItem);
+	wxString headerText = colItem.GetText();
 
-		for (int i = 0; i < gamesVec.size(); i++) {
-			CapitalizeAfterSpaces(gamesVec[i].gameName);
-			gamesListBox->InsertItem(i, gamesVec[i].gameName);
-			gamesListBox->SetItem(i, 1, std::to_string(gamesVec[i].values[0]));
-			for (int j = 2; j <= 10; j++) {
-				std::string itemText;
-
-				if (gamesVec[i].values[j - 1] == 0) {
-					itemText = "Free";
-				}
-				else if (gamesVec[i].values[j - 1] == -1) {
-					itemText = "NA";
-				}
-				else if (j == 9 || j == 10) {
-					itemText = "$" + std::to_string(gamesVec[i].values[j - 1]);
-				}
-				else {
-					itemText = std::to_string(gamesVec[i].values[j - 1]);
-				}
-
-				gamesListBox->SetItem(i, j, itemText);
-			}
-			
-		}
-		ColorCodeItems();
+	if (columnIndex != lastClickedColumn)
+	{
+		clickCount = 1;
+		lastClickedColumn = columnIndex;
 	}
+	else if (clickCount == 3) {
+		clickCount = 1;
+	}
+	else
+	{
+		clickCount++;
+	}
+
+	std::vector<Games> gamesVec = LoadGamesFromFile("savedgames.txt");
+	if (headerText == "Scores" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[0] < game2.values[0];
+			});
+	}
+	else if (headerText == "Scores" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[0] > game2.values[0];
+			});
+	}
+	else if (headerText == "Scores" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Visuals" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[1] < game2.values[1];
+			});
+	}
+	else if (headerText == "Visuals" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[1] > game2.values[1];
+			});
+	}
+	else if (headerText == "Visuals" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Sound/Music" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[2] < game2.values[2];
+			});
+	}
+	else if (headerText == "Sound/Music" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[2] > game2.values[2];
+			});
+	}
+	else if (headerText == "Sound/Music" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Core Loop" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[3] < game2.values[3];
+			});
+	}
+	else if (headerText == "Core Loop" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[3] > game2.values[3];
+			});
+	}
+	else if (headerText == "Core Loop" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Story/Character Design" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[4] < game2.values[4];
+			});
+	}
+	else if (headerText == "Story/Character Design" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[4] > game2.values[4];
+			});
+	}
+	else if (headerText == "Story/Character Design" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Friendly UI" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[5] < game2.values[5];
+			});
+	}
+	else if (headerText == "Friendly UI" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[5] > game2.values[5];
+			});
+	}
+	else if (headerText == "Friendly UI" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Competition" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[6] < game2.values[6];
+			});
+	}
+	else if (headerText == "Competition" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[6] > game2.values[6];
+			});
+	}
+	else if (headerText == "Competition" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Real World Simulation" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[7] < game2.values[7];
+			});
+	}
+	else if (headerText == "Real World Simulation" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[7] > game2.values[7];
+			});
+	}
+	else if (headerText == "Real World Simulation" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "Raw Price" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[8] < game2.values[8];
+			});
+	}
+	else if (headerText == "Raw Price" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[8] > game2.values[8];
+			});
+	}
+	else if (headerText == "Raw Price" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+	else if (headerText == "I Paid" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[9] < game2.values[9];
+			});
+	}
+	else if (headerText == "I Paid" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.values[9] > game2.values[9];
+			});
+	}
+	else if (headerText == "I Paid" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
+
+	gamesListBox->DeleteAllItems();
+
+	for (int i = 0; i < gamesVec.size(); i++) {
+		CapitalizeAfterSpaces(gamesVec[i].gameName);
+		gamesListBox->InsertItem(i, gamesVec[i].gameName);
+		gamesListBox->SetItem(i, 1, std::to_string(gamesVec[i].values[0]));
+		for (int j = 2; j <= 10; j++) {
+			std::string itemText;
+
+			if (gamesVec[i].values[j - 1] == 0) {
+				itemText = "Free";
+			}
+			else if (gamesVec[i].values[j - 1] == -1) {
+				itemText = "NA";
+			}
+			else if (j == 9 || j == 10) {
+				itemText = "$" + std::to_string(gamesVec[i].values[j - 1]);
+			}
+			else {
+				itemText = std::to_string(gamesVec[i].values[j - 1]);
+			}
+
+			gamesListBox->SetItem(i, j, itemText);
+		}
+
+	}
+	ColorCodeItems();
 }
 
 bool MainFrame::CompareGameToList(const wxString& gameName) {

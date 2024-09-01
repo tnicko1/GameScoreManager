@@ -3,6 +3,7 @@
 #include <wx/listctrl.h>
 #include "SavedGames.h"
 
+
 class MainFrame : public wxFrame
 {
 public:
@@ -21,9 +22,10 @@ private:
 	void OnListItemDeselected(wxMouseEvent& evt);
 	long selectedItemIndex;
 	void OnDelKeyButtonClick(wxCommandEvent& evt);
-	void OnResize(wxListEvent& evt);
 
-	void OnFilterButtonClick(wxCommandEvent& evt);
+	void OnColumnFilter(wxListEvent& evt);
+	int lastClickedColumn;
+	int clickCount;
 
 
 	bool CompareGameToList(const wxString& gameName);
@@ -36,7 +38,6 @@ private:
 	wxButton* addButton;
 	wxTextCtrl* inputField;
 	wxListCtrl* gamesListBox;
-	wxButton* filterButton;
 	wxButton* deleteButton;
 };
 
