@@ -4,8 +4,19 @@
 #include <wx/numdlg.h>
 #include "DialogOverloads.h"
 #include <cstdlib> //for std::stoi
+#include <filesystem>
 
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
+
+	std::filesystem::path dirPath = std::filesystem::current_path();
+	std::string iconPath = dirPath.string() + "/window-icon.ico";
+
+	if (std::filesystem::exists(iconPath)) {
+		wxIcon icon;
+		icon.LoadFile(iconPath, wxBITMAP_TYPE_ICO);
+		this->SetIcon(icon);
+	}
+
 	CreateControls();
 	SetupSizers();
 	BindEventHandlers();
@@ -49,8 +60,6 @@ void MainFrame::CreateControls() {
 	gamesListBox->SetColumnWidth(7, 95);
 	gamesListBox->SetColumnWidth(8, 165);
 	gamesListBox->SetColumnWidth(10, 68);
-
-
 }
 
 void MainFrame::BindEventHandlers() {
@@ -102,7 +111,7 @@ void MainFrame::AddSavedGames() {
 		for (int j = 2; j <= 10; j++) {
 			std::string itemText;
 
-			if (gamesVec[i].values[j - 1] == 0) {
+			if (gamesVec[i].values[j - 1] == 0 && (j == 9 || j == 10)) {
 				itemText = "Free";
 			}
 			else if (gamesVec[i].values[j - 1] == -1) {
@@ -224,7 +233,7 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 			for (int j = 2; j <= 10; j++) {
 				std::string itemText;
 
-				if (gamesVec[i].values[j - 1] == 0) {
+				if (gamesVec[i].values[j - 1] == 0 && (j == 9 || j == 10)) {
 					itemText = "Free";
 				}
 				else if (gamesVec[i].values[j - 1] == -1) {
@@ -277,7 +286,7 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 			for (int j = 2; j <= 10; j++) {
 				std::string itemText;
 
-				if (gamesVec[i].values[j - 1] == 0) {
+				if (gamesVec[i].values[j - 1] == 0 && (j == 9 || j == 10)) {
 					itemText = "Free";
 				}
 				else if (gamesVec[i].values[j - 1] == -1) {
@@ -524,7 +533,7 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 		for (int j = 2; j <= 10; j++) {
 			std::string itemText;
 
-			if (gamesVec[i].values[j - 1] == 0) {
+			if (gamesVec[i].values[j - 1] == 0 && (j == 9 || j == 10)) {
 				itemText = "Free";
 			}
 			else if (gamesVec[i].values[j - 1] == -1) {

@@ -23,31 +23,31 @@ void MyNumberEntryDialog::SetupCustomLayout() {
 
 void MyNumberEntryDialog::OnAdvancedButtonClicked(wxCommandEvent& evt) {
     
-    wxNumberEntryDialog visualsDialog(this, "How good are the visuals?", "0 for not applicable", "Visuals", 0, 0, 100);
+    wxNumberEntryDialog visualsDialog(this, "How good are the visuals?", "-1 for not applicable", "Visuals", 0, -1, 100);
     if (visualsDialog.ShowModal() == wxID_OK) {
         int visuals = visualsDialog.GetValue();
         visualsDialog.Hide();
-        wxNumberEntryDialog soundDialog(this, "How good is the sound/music design?", "0 for not applicable", "Sound/Music", 0, 0, 100);
+        wxNumberEntryDialog soundDialog(this, "How good is the sound/music design?", "-1 for not applicable", "Sound/Music", 0, -1, 100);
         if (soundDialog.ShowModal() == wxID_OK) {
             int soundMusic = soundDialog.GetValue();
             soundDialog.Hide();
-            wxNumberEntryDialog coreDialog(this, "How good is the core loop?", "0 for not applicable", "Core Loop", 0, 0, 100);
+            wxNumberEntryDialog coreDialog(this, "How good is the core loop?", "-1 for not applicable", "Core Loop", 0, -1, 100);
             if (coreDialog.ShowModal() == wxID_OK) {
                 int coreLoop = coreDialog.GetValue();
                 coreDialog.Hide();
-                wxNumberEntryDialog storyDialog(this, "How good is the story/character design?", "0 for not applicable", "Story/Character Design", 0, 0, 100);
+                wxNumberEntryDialog storyDialog(this, "How good is the story/character design?", "-1 for not applicable", "Story/Character Design", 0, -1, 100);
                 if (storyDialog.ShowModal() == wxID_OK) {
                     int storyDesign = storyDialog.GetValue();
                     storyDialog.Hide();
-                    wxNumberEntryDialog UIDialog(this, "How good is the UI?", "0 for not applicable", "Friendly UI", 0, 0, 100);
+                    wxNumberEntryDialog UIDialog(this, "How good is the UI?", "-1 for not applicable", "Friendly UI", 0, -1, 100);
                     if (UIDialog.ShowModal() == wxID_OK) {
                         int friendlyUI = UIDialog.GetValue();
                         UIDialog.Hide();
-                        wxNumberEntryDialog competitionDialog(this, "How good is the competition?", "0 for not applicable", "Competition", 0, 0, 100);
+                        wxNumberEntryDialog competitionDialog(this, "How good is the competition?", "-1 for not applicable", "Competition", 0, -1, 100);
                         if (competitionDialog.ShowModal() == wxID_OK) {
                             int competition = competitionDialog.GetValue();
                             competitionDialog.Hide();
-                            wxNumberEntryDialog simDialog(this, "How good is the real world simulation?", "0 for not applicable", "Real World Simulation", 0, 0, 100);
+                            wxNumberEntryDialog simDialog(this, "How good is the real world simulation?", "-1 for not applicable", "Real World Simulation", 0, -1, 100);
                             if (simDialog.ShowModal() == wxID_OK) {
                                 int realWorldSim = simDialog.GetValue();
                                 simDialog.Hide();
@@ -75,10 +75,10 @@ void MyNumberEntryDialog::OnAdvancedButtonClicked(wxCommandEvent& evt) {
         }
     }
 }
-int countZeros(const Values& s) {
+int countNAs(const Values& s) {
     int count = 0;
     for (int i = 0; i < 7; i++) {
-        if (s.valuesArr[i] == 0)
+        if (s.valuesArr[i] == -1)
             count++;
     }
     return count;
@@ -86,9 +86,11 @@ int countZeros(const Values& s) {
 
 int MyNumberEntryDialog::processValues(const Values& values) {
     int fullScore = 0;
-    int zeroCount = countZeros(values);
+    int zeroCount = countNAs(values);
     for (int i = 0; i < 7; i++) {
-        fullScore += values.valuesArr[i];
+        if (values.valuesArr[i] != -1) {
+            fullScore += values.valuesArr[i];
+        }
     }
     int scoreAvg = fullScore / (7 - zeroCount);
     return scoreAvg;
