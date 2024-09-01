@@ -362,12 +362,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	std::vector<Games> gamesVec = LoadGamesFromFile("savedgames.txt");
 	if (headerText == "Scores" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[0] < game2.values[0];
+			return game1.values[0] > game2.values[0];
 			});
 	}
 	else if (headerText == "Scores" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[0] > game2.values[0];
+			return game1.values[0] < game2.values[0];
 			});
 	}
 	else if (headerText == "Scores" && clickCount == 3) {
@@ -376,12 +376,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Visuals" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[1] < game2.values[1];
+			return game1.values[1] > game2.values[1];
 			});
 	}
 	else if (headerText == "Visuals" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[1] > game2.values[1];
+			return game1.values[1] < game2.values[1];
 			});
 	}
 	else if (headerText == "Visuals" && clickCount == 3) {
@@ -390,12 +390,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Sound/Music" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[2] < game2.values[2];
+			return game1.values[2] > game2.values[2];
 			});
 	}
 	else if (headerText == "Sound/Music" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[2] > game2.values[2];
+			return game1.values[2] < game2.values[2];
 			});
 	}
 	else if (headerText == "Sound/Music" && clickCount == 3) {
@@ -404,12 +404,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Core Loop" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[3] < game2.values[3];
+			return game1.values[3] > game2.values[3];
 			});
 	}
 	else if (headerText == "Core Loop" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[3] > game2.values[3];
+			return game1.values[3] < game2.values[3];
 			});
 	}
 	else if (headerText == "Core Loop" && clickCount == 3) {
@@ -418,12 +418,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Story/Character Design" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[4] < game2.values[4];
+			return game1.values[4] > game2.values[4];
 			});
 	}
 	else if (headerText == "Story/Character Design" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[4] > game2.values[4];
+			return game1.values[4] < game2.values[4];
 			});
 	}
 	else if (headerText == "Story/Character Design" && clickCount == 3) {
@@ -432,12 +432,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Friendly UI" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[5] < game2.values[5];
+			return game1.values[5] > game2.values[5];
 			});
 	}
 	else if (headerText == "Friendly UI" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[5] > game2.values[5];
+			return game1.values[5] < game2.values[5];
 			});
 	}
 	else if (headerText == "Friendly UI" && clickCount == 3) {
@@ -446,12 +446,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Competition" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[6] < game2.values[6];
+			return game1.values[6] > game2.values[6];
 			});
 	}
 	else if (headerText == "Competition" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[6] > game2.values[6];
+			return game1.values[6] < game2.values[6];
 			});
 	}
 	else if (headerText == "Competition" && clickCount == 3) {
@@ -460,12 +460,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Real World Simulation" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[7] < game2.values[7];
+			return game1.values[7] > game2.values[7];
 			});
 	}
 	else if (headerText == "Real World Simulation" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[7] > game2.values[7];
+			return game1.values[7] < game2.values[7];
 			});
 	}
 	else if (headerText == "Real World Simulation" && clickCount == 3) {
@@ -474,12 +474,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "Raw Price" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[8] < game2.values[8];
+			return game1.values[8] > game2.values[8];
 			});
 	}
 	else if (headerText == "Raw Price" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[8] > game2.values[8];
+			return game1.values[8] < game2.values[8];
 			});
 	}
 	else if (headerText == "Raw Price" && clickCount == 3) {
@@ -488,12 +488,12 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	}
 	else if (headerText == "I Paid" && clickCount == 1) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[9] < game2.values[9];
+			return game1.values[9] > game2.values[9];
 			});
 	}
 	else if (headerText == "I Paid" && clickCount == 2) {
 		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
-			return game1.values[9] > game2.values[9];
+			return game1.values[9] < game2.values[9];
 			});
 	}
 	else if (headerText == "I Paid" && clickCount == 3) {
