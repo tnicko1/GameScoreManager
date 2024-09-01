@@ -500,6 +500,20 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 		gamesListBox->DeleteAllItems();
 		AddSavedGames();
 	}
+	else if (headerText == "Games" && clickCount == 1) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.gameName < game2.gameName;
+			});
+	}
+	else if (headerText == "Games" && clickCount == 2) {
+		std::sort(gamesVec.begin(), gamesVec.end(), [](Games& game1, Games& game2) {
+			return game1.gameName > game2.gameName;
+			});
+	}
+	else if (headerText == "Games" && clickCount == 3) {
+		gamesListBox->DeleteAllItems();
+		AddSavedGames();
+	}
 
 	gamesListBox->DeleteAllItems();
 
