@@ -4,10 +4,22 @@
 
 struct Values
 {
-    int valuesArr[10];
+    double valuesArr[10];
 };
 
 extern Values gValues;
+
+class NumericInputDialog : public wxDialog {
+public:
+    NumericInputDialog(wxWindow* parent, const wxString& message, const wxString& caption, const wxString& value = "");
+
+    wxString GetValue() const;
+private:
+    wxTextCtrl* textCtrl;
+
+    void OnChar(wxKeyEvent& evt);
+    void OnOK(wxCommandEvent& evt);
+};
 
 class MyNumberEntryDialog : public wxNumberEntryDialog {
 public:
