@@ -375,6 +375,8 @@ void MainFrame::OnDelKeyClick(wxKeyEvent& evt) {
 			if (response == wxYES) {
 				gamesListBox->DeleteItem(selectedItemIndex);
 				selectedItemIndex = wxNOT_FOUND;
+				std::vector<Games> gameVec = GetItems();
+				SaveGamesToFile(gameVec, "savedgames.txt");
 			}
 		}
 		else {
