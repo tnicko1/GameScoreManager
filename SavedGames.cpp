@@ -10,16 +10,16 @@ void SaveGamesToFile(const std::vector<Games>& gamesVec, const std::string fileN
 	for (const Games& games : gamesVec) {
 		std::string name = games.gameName;
 		std::replace(name.begin(), name.end(), ' ', '_');
-		int score = games.values[0];
-		int visuals = games.values[1];
-		int soundAndMusic = games.values[2];
-		int coreLoop = games.values[3];
-		int storyDesign = games.values[4];
-		int UI = games.values[5];
-		int competition = games.values[6];
-		int realWorldSim = games.values[7];
-		int rawPrice = games.values[8];
-		int pricePaid = games.values[9];
+		double score = games.values[0];
+		double visuals = games.values[1];
+		double soundAndMusic = games.values[2];
+		double coreLoop = games.values[3];
+		double storyDesign = games.values[4];
+		double UI = games.values[5];
+		double competition = games.values[6];
+		double realWorldSim = games.values[7];
+		double rawPrice = games.values[8];
+		double pricePaid = games.values[9];
 
 		fout << '\n' << name << ' ' << score << ' ' << visuals << ' ' << soundAndMusic << ' ' << coreLoop << ' ' << storyDesign
 			 << ' ' << UI << ' ' << competition << ' ' << realWorldSim << ' ' << rawPrice << ' ' << pricePaid;
@@ -39,7 +39,7 @@ std::vector<Games> LoadGamesFromFile(const std::string fileName) {
 
 	for (int i = 0; i < n; i++) {
 		std::string name;
-		int score, visuals, soundAndMusic, coreLoop, storyDesign, UI, competition, realWorldSim, rawPrice, pricePaid;
+		double score, visuals, soundAndMusic, coreLoop, storyDesign, UI, competition, realWorldSim, rawPrice, pricePaid;
 
 		fin >> name >> score >> visuals >> soundAndMusic >> coreLoop >> storyDesign >> UI >> competition >> realWorldSim >> rawPrice >> pricePaid;
 		std::replace(name.begin(), name.end(), '_', ' ');

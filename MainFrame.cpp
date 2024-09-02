@@ -3,8 +3,11 @@
 #include <cstddef> //for std::size_t
 #include <wx/numdlg.h>
 #include "DialogOverloads.h"
-#include <cstdlib> //for std::stoi
+#include <cstdlib> //for std::stoi+
 #include <filesystem>
+#include <sstream>
+#include <iomanip>
+
 
 MainFrame::MainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
 
@@ -107,7 +110,10 @@ void MainFrame::AddSavedGames() {
 
 	for (int i = 0; i < gamesVec.size(); i++) {
 		gamesListBox->InsertItem(i, gamesVec[i].gameName);
-		gamesListBox->SetItem(i, 1, std::to_string(gamesVec[i].values[0]));
+		double value = gamesVec[i].values[0];
+		std::ostringstream stream;
+		stream << std::fixed << std::setprecision(0) << value;
+		gamesListBox->SetItem(i, 1, stream.str());
 		for (int j = 2; j <= 10; j++) {
 			std::string itemText;
 
@@ -118,10 +124,16 @@ void MainFrame::AddSavedGames() {
 				itemText = "NA";
 			}
 			else if (j == 9 || j == 10) {
-				itemText = "$" + std::to_string(gamesVec[i].values[j - 1]);
+				double value = gamesVec[i].values[j - 1];
+				std::ostringstream stream;
+				stream << std::fixed << std::setprecision(2) << value;
+				itemText = "$" + stream.str();
 			}
 			else {
-				itemText = std::to_string(gamesVec[i].values[j - 1]);
+				double value = gamesVec[i].values[j - 1];
+				std::ostringstream stream;
+				stream << std::fixed << std::setprecision(0) << value;
+				itemText = stream.str();;
 			}
 
 			gamesListBox->SetItem(i, j, itemText);
@@ -227,7 +239,10 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 		for (int i = 0; i < gamesVec.size(); i++) {
 			CapitalizeAfterSpaces(gamesVec[i].gameName);
 			gamesListBox->InsertItem(i, gamesVec[i].gameName);
-			gamesListBox->SetItem(i, 1, std::to_string(gamesVec[i].values[0]));
+			double value = gamesVec[i].values[0];
+			std::ostringstream stream;
+			stream << std::fixed << std::setprecision(0) << value;
+			gamesListBox->SetItem(i, 1, stream.str());
 
 
 			for (int j = 2; j <= 10; j++) {
@@ -240,10 +255,16 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 					itemText = "NA";
 				}
 				else if (j == 9 || j == 10) {
-					itemText = "$" + std::to_string(gamesVec[i].values[j - 1]);
+					double value = gamesVec[i].values[j - 1];
+					std::ostringstream stream;
+					stream << std::fixed << std::setprecision(2) << value;
+					itemText = "$" + stream.str();
 				}
 				else {
-					itemText = std::to_string(gamesVec[i].values[j - 1]);
+					double value = gamesVec[i].values[j - 1];
+					std::ostringstream stream;
+					stream << std::fixed << std::setprecision(0) << value;
+					itemText = stream.str();;
 				}
 
 				gamesListBox->SetItem(i, j, itemText);
@@ -263,7 +284,17 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 		gamesListBox->InsertItem(itemCount, gameName);
 		gamesListBox->SetItem(itemCount, 1, std::to_string(gValues.valuesArr[9]));
 		for (int j = 2; j <= 10; j++) {
-			gamesListBox->SetItem(itemCount, j, std::to_string(gValues.valuesArr[j - 2]));
+			double value = gValues.valuesArr[j - 2];
+			if (j == 9 || j == 10) {
+				std::ostringstream stream;
+				stream << std::fixed << std::setprecision(2) << value;
+				gamesListBox->SetItem(itemCount, j, stream.str());
+			}
+			else {
+				std::ostringstream stream;
+				stream << std::fixed << std::setprecision(0) << value;
+				gamesListBox->SetItem(itemCount, j, stream.str());
+			}
 		}
 		inputField->Clear();
 		inputField->Show(false);
@@ -280,7 +311,10 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 		for (int i = 0; i < gamesVec.size(); i++) {
 			CapitalizeAfterSpaces(gamesVec[i].gameName);
 			gamesListBox->InsertItem(i, gamesVec[i].gameName);
-			gamesListBox->SetItem(i, 1, std::to_string(gamesVec[i].values[0]));
+			double value = gamesVec[i].values[0];
+			std::ostringstream stream;
+			stream << std::fixed << std::setprecision(0) << value;
+			gamesListBox->SetItem(i, 1, stream.str());
 
 
 			for (int j = 2; j <= 10; j++) {
@@ -293,10 +327,16 @@ void MainFrame::OnInputEnterClick(wxCommandEvent& evt) {
 					itemText = "NA";
 				}
 				else if (j == 9 || j == 10) {
-					itemText = "$" + std::to_string(gamesVec[i].values[j - 1]);
+					double value = gamesVec[i].values[j - 1];
+					std::ostringstream stream;
+					stream << std::fixed << std::setprecision(2) << value;
+					itemText = "$" + stream.str();
 				}
 				else {
-					itemText = std::to_string(gamesVec[i].values[j - 1]);
+					double value = gamesVec[i].values[j - 1];
+					std::ostringstream stream;
+					stream << std::fixed << std::setprecision(0) << value;
+					itemText = stream.str();;
 				}
 
 				gamesListBox->SetItem(i, j, itemText);
@@ -529,7 +569,10 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 	for (int i = 0; i < gamesVec.size(); i++) {
 		CapitalizeAfterSpaces(gamesVec[i].gameName);
 		gamesListBox->InsertItem(i, gamesVec[i].gameName);
-		gamesListBox->SetItem(i, 1, std::to_string(gamesVec[i].values[0]));
+		double value = gamesVec[i].values[0];
+		std::ostringstream stream;
+		stream << std::fixed << std::setprecision(0) << value;
+		gamesListBox->SetItem(i, 1, stream.str());
 		for (int j = 2; j <= 10; j++) {
 			std::string itemText;
 
@@ -540,10 +583,16 @@ void MainFrame::OnColumnFilter(wxListEvent& evt) {
 				itemText = "NA";
 			}
 			else if (j == 9 || j == 10) {
-				itemText = "$" + std::to_string(gamesVec[i].values[j - 1]);
+				double value = gamesVec[i].values[j - 1];
+				std::ostringstream stream;
+				stream << std::fixed << std::setprecision(2) << value;
+				itemText = "$" + stream.str();
 			}
 			else {
-				itemText = std::to_string(gamesVec[i].values[j - 1]);
+				double value = gamesVec[i].values[j - 1];
+				std::ostringstream stream;
+				stream << std::fixed << std::setprecision(0) << value;
+				itemText = stream.str();;
 			}
 
 			gamesListBox->SetItem(i, j, itemText);
@@ -582,10 +631,10 @@ std::vector<Games> MainFrame::GetItems() {
 			item.SetColumn(j + 1);
 			gamesListBox->GetItem(item);
 			if (item.GetText() == "Free") {
-				game.values[j] = 0;
+				game.values[j] = 0.0;
 			}
 			else if (item.GetText() == "NA") {
-				game.values[j] = -1;
+				game.values[j] = -1.0;
 			}
 			else if (j == 8 || j == 9) {
 				std::string str = item.GetText().ToStdString();
@@ -593,14 +642,14 @@ std::vector<Games> MainFrame::GetItems() {
 					str = str.substr(1); // Remove the first character
 				}
 				try {
-					game.values[j] = std::stoi(str);
+					game.values[j] = std::stod(str);
 				}
 				catch (const std::invalid_argument& e) {
 					wxMessageBox("invalid argument"); // Or handle the error as appropriate
 				}
 			}
 			else {
-				game.values[j] = std::stoi(item.GetText().ToStdString());
+				game.values[j] = std::stod(item.GetText().ToStdString());
 			}
 		}
 		gamesVec.push_back(game);

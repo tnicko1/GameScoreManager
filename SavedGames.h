@@ -4,7 +4,7 @@
 
 struct Games {
 	std::string gameName;
-	int values[10];
+	double values[10];
 };
 
 void SaveGamesToFile(const std::vector<Games>& gamesVec, const std::string fileName);
